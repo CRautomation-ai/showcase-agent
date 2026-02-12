@@ -42,9 +42,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
     setError(errorMessage);
   };
 
+  const handleResetDocs = () => {
+    setDocumentsLoaded(false);
+    setMessages([{ role: "assistant", content: WELCOME_TEXT }]);
+    setError(null);
+  };
+
   return (
     <div className="app-container">
       <div className="header">
+        <button type="button" className="reset-button" onClick={handleResetDocs}>
+          Reset Doc
+        </button>
         <img src={logo} alt="Showcase Agent" className="header-logo" />
         {onLogout && (
           <button type="button" className="logout-button" onClick={onLogout}>
