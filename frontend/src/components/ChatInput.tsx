@@ -13,7 +13,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onChange,
   onSubmit,
   loading,
-  placeholder = "Ask Bolt...",
+  placeholder = "Ask the agent...",
 }) => (
   <div className="input-container">
     <form onSubmit={onSubmit} className="input-form">

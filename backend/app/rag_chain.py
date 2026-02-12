@@ -120,7 +120,7 @@ def query_rag(
         context = "\n\n---\n\n".join(context_parts)
 
         # Step 4: Build prompt for OpenAI (use search_query so answer matches intent)
-        system_prompt = """You are a helpful assistant named Bolt that answers questions based on the provided context from documents. 
+        system_prompt = """You are a helpful assistant that answers questions based on the provided context from documents. 
 Use only the information from the context to answer the question. If the context doesn't contain enough information to answer the question, say so."""
 
         user_prompt = f"""Context from documents:

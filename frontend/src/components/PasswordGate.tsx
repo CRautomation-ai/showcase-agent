@@ -35,7 +35,7 @@ export const PasswordGate: React.FC<PasswordGateProps> = ({ onSuccess }) => {
     <div className="app-container">
       <div className="header">
         <h1>Sign in</h1>
-        <p>Enter the company password to access the SOP RAG agent.</p>
+        <p>Enter the password to access the Showcase Agent.</p>
       </div>
       <div className="password-gate">
         <form onSubmit={handleSubmit} className="input-form">

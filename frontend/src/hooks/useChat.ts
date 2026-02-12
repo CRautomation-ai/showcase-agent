@@ -94,6 +94,7 @@ export function useChat(onUnauthorized?: () => void) {
 
   return {
     messages,
+    setMessages,
     input,
     setInput,
     loading,

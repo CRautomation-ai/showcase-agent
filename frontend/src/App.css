@@ -10,7 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0a0a0a;
+  background: #1a2a3a;
   min-height: 100vh;
   padding: 20px;
 }
@@ -18,7 +18,7 @@ body {
 .app-container {
   max-width: 900px;
   margin: 0 auto;
-  background: #000;
+  background: #1c2d42;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   overflow: hidden;
@@ -29,11 +29,11 @@ body {
 
 .header {
   position: relative;
-  background: #000;
+  background: #243853;
   color: #fff;
   padding: 24px;
   text-align: center;
-  border-bottom: 1px solid #ed222a;
+  border-bottom: 1px solid #3a506b;
 }
 
 .logout-button {
@@ -55,7 +55,7 @@ body {
 }
 
 .header-logo {
-  height: 40px;
+  height: 70px;
   width: auto;
   display: inline-block;
   object-fit: contain;
@@ -183,16 +183,16 @@ body {
 }
 
 .message.user .message-bubble {
-  background: #1a1a1a;
+  background: #1c2d42;
   color: #fff;
-  border: 1px solid #333;
+  border: 1px solid #3a506b;
   border-bottom-right-radius: 4px;
 }
 
 .message.assistant .message-bubble {
-  background: #1a1a1a;
+  background: #2d4a66;
   color: #e9ecef;
-  border: 1px solid #333;
+  border: 1px solid #3a506b;
   border-bottom-left-radius: 4px;
 }
 
@@ -264,7 +264,7 @@ body {
 }
 
 .message-source-chip {
-  background: #333;
+  background: #1c2d42;
   padding: 4px 10px;
   border-radius: 12px;
   display: inline-block;
@@ -360,8 +360,8 @@ body {
 
 .input-container {
   padding: 20px 24px;
-  background: #000;
-  border-top: 1px solid #ed222a;
+  background: #243853;
+  border-top: 1px solid #3a506b;
 }
 
 .input-form {
@@ -372,26 +372,26 @@ body {
 .input-field {
   flex: 1;
   padding: 12px 16px;
-  border: 2px solid #333;
+  border: 2px solid #3a506b;
   border-radius: 24px;
   font-size: 15px;
   outline: none;
   transition: border-color 0.2s;
-  background: #1a1a1a;
+  background: #2d4a66;
   color: #fff;
 }
 
 .input-field::placeholder {
-  color: #6b7280;
+  color: #8ba3bf;
 }
 
 .input-field:focus {
-  border-color: #555;
+  border-color: #5a7a9a;
 }
 
 .send-button {
   padding: 12px 32px;
-  background: #ed222a;
+  background: #243853;
   color: #fff;
   border: none;
   border-radius: 24px;
@@ -403,7 +403,7 @@ body {
 
 .send-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(237, 34, 42, 0.5);
+  box-shadow: 0 4px 12px rgba(36, 56, 83, 0.5);
 }
 
 .send-button:active:not(:disabled) {
@@ -458,38 +458,38 @@ body {
 }
 
 .file-upload-dropzone {
-  border: 2px dashed #333;
+  border: 2px dashed #3a506b;
   border-radius: 12px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #1a1a1a;
+  background: #1c2d42;
 }
 
 .file-upload-dropzone:hover {
-  border-color: #ed222a;
-  background: rgba(237, 34, 42, 0.05);
+  border-color: #243853;
+  background: rgba(36, 56, 83, 0.15);
 }
 
 .file-upload-dropzone.dragging {
-  border-color: #ed222a;
-  background: rgba(237, 34, 42, 0.1);
+  border-color: #243853;
+  background: rgba(36, 56, 83, 0.25);
   transform: scale(1.01);
 }
 
 .file-upload-dropzone.uploading {
   cursor: default;
-  border-color: #555;
+  border-color: #5a7a9a;
 }
 
 .upload-icon {
-  color: #6b7280;
+  color: #8ba3bf;
   margin-bottom: 12px;
 }
 
 .file-upload-dropzone:hover .upload-icon {
-  color: #ed222a;
+  color: #243853;
 }
 
 .upload-text {
@@ -505,7 +505,7 @@ body {
 }
 
 .upload-text-sub {
-  color: #6b7280;
+  color: #8ba3bf;
   font-size: 12px;
 }
 

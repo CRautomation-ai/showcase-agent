@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import logo from "../assets/logo.jpg";
-import { WELCOME_TEXT } from "../constants/chat";
+import logo from "../assets/logo.png";
+import { WELCOME_TEXT, UPLOAD_SUCCESS_TEXT } from "../constants/chat";
 import { useChat } from "../hooks/useChat";
 import { MessageBubble } from "./MessageBubble";
 import { WelcomeView } from "./WelcomeView";
@@ -15,6 +15,7 @@ interface ChatInterfaceProps {
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout }) => {
   const {
     messages,
+    setMessages,
     input,
     setInput,
     loading,
@@ -33,6 +34,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
 
   const handleUploadComplete = () => {
     setDocumentsLoaded(true);
+    // Replace the welcome message with upload success message
+    setMessages([{ role: "assistant", content: UPLOAD_SUCCESS_TEXT }]);
   };
 
   const handleUploadError = (errorMessage: string) => {
@@ -42,7 +45,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
   return (
     <div className="app-container">
       <div className="header">
-        <img src={logo} alt="SOP RAG" className="header-logo" />
+        <img src={logo} alt="Showcase Agent" className="header-logo" />
         {onLogout && (
           <button type="button" className="logout-button" onClick={onLogout}>
             Log out

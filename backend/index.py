@@ -24,7 +24,7 @@ from app.vector_store import store_embeddings
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="SOP RAG Agent API")
+app = FastAPI(title="Showcase Agent API")
 
 # Configure CORS
 app.add_middleware(
