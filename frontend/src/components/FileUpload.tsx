@@ -5,6 +5,7 @@ import { Spinner } from "./Spinner";
 interface FileUploadProps {
   onUploadComplete?: (result: UploadResult) => void;
   onUploadError?: (error: string) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 interface UploadResult {
@@ -17,6 +18,7 @@ interface UploadResult {
 export const FileUpload: React.FC<FileUploadProps> = ({
   onUploadComplete,
   onUploadError,
+  onUploadingChange,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -53,6 +55,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       }
 
       setIsUploading(true);
+      onUploadingChange?.(true);
       setUploadStatus(`Uploading ${validFiles.length} file(s)...`);
 
       try {
@@ -86,9 +89,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onUploadError?.(message);
       } finally {
         setIsUploading(false);
+        onUploadingChange?.(false);
       }
     },
-    [onUploadComplete, onUploadError]
+    [onUploadComplete, onUploadError, onUploadingChange]
   );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {

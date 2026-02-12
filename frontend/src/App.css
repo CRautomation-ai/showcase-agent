@@ -382,6 +382,21 @@ body {
   border-top: 1px solid #3a506b;
 }
 
+.input-container.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.input-container.disabled .input-field {
+  cursor: not-allowed;
+  background: #1c2d42;
+}
+
+.input-container.disabled .send-button {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .input-form {
   display: flex;
   gap: 12px;

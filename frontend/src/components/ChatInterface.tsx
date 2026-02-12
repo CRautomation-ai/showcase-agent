@@ -26,6 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
   } = useChat(onUnauthorized);
 
   const [documentsLoaded, setDocumentsLoaded] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const isWelcomeOnly =
     messages.length === 1 &&
@@ -69,6 +70,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
           <WelcomeView 
             onUploadComplete={handleUploadComplete}
             onUploadError={handleUploadError}
+            onUploadingChange={setIsUploading}
           />
         ) : (
           <>
@@ -86,6 +88,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
         onChange={setInput}
         onSubmit={handleSubmit}
         loading={loading}
+        disabled={isUploading}
       />
     </div>
   );
