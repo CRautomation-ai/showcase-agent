@@ -12,8 +12,10 @@ from app.models import AuthRequest, AuthResponse, QueryRequest, QueryResponse, H
 from app.database import initialize_database, is_database_empty, get_document_count, clear_all_embeddings
 from app.rag_chain import query_rag, get_embedding
 from app.auth import verify_password, create_token, get_current_token
-from app.document_processor import process_uploaded_file
 from app.vector_store import store_embeddings
+
+# Note: document_processor is lazy-imported in upload_files() to avoid loading
+# heavy dependencies (langchain, tiktoken) on Vercel serverless startup
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -83,6 +85,9 @@ async def upload_files(files: List[UploadFile] = File(...), _: str = Depends(get
     Upload files, clear existing embeddings, and process the new files.
     Accepts PDF and Word documents (.pdf, .docx, .doc).
     """
+    # Lazy import to avoid loading heavy dependencies on serverless startup
+    from app.document_processor import process_uploaded_file
+    
     try:
         # Validate file types
         supported_extensions = {'.pdf', '.docx', '.doc'}
