@@ -101,3 +101,23 @@ def get_document_count():
     finally:
         cursor.close()
         conn.close()
+
+
+def clear_all_embeddings():
+    """Delete all document chunks from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("DELETE FROM document_chunks;")
+        deleted_count = cursor.rowcount
+        conn.commit()
+        logger.info(f"Deleted {deleted_count} document chunks from database")
+        return deleted_count
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error clearing embeddings: {e}")
+        raise
+    finally:
+        cursor.close()
+        conn.close()

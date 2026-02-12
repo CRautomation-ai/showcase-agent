@@ -98,6 +98,7 @@ export function useChat(onUnauthorized?: () => void) {
     setInput,
     loading,
     error,
+    setError,
     messagesEndRef,
     handleSubmit,
   };

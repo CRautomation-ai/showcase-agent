@@ -36,3 +36,10 @@ class AuthRequest(BaseModel):
 
 class AuthResponse(BaseModel):
     token: str
+
+
+class UploadResponse(BaseModel):
+    message: str
+    files_processed: int
+    chunks_processed: int
+    filenames: List[str]

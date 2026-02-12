@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../assets/logo.jpg";
 import { WELCOME_TEXT } from "../constants/chat";
 import { useChat } from "../hooks/useChat";
@@ -19,14 +19,25 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
     setInput,
     loading,
     error,
+    setError,
     messagesEndRef,
     handleSubmit,
   } = useChat(onUnauthorized);
+
+  const [documentsLoaded, setDocumentsLoaded] = useState(false);
 
   const isWelcomeOnly =
     messages.length === 1 &&
     messages[0].role === "assistant" &&
     messages[0].content === WELCOME_TEXT;
+
+  const handleUploadComplete = () => {
+    setDocumentsLoaded(true);
+  };
+
+  const handleUploadError = (errorMessage: string) => {
+    setError(errorMessage);
+  };
 
   return (
     <div className="app-container">
@@ -42,8 +53,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onUnauthorized, onLogout 
       {error && <div className="error-message">{error}</div>}
 
       <div className="messages-container">
-        {isWelcomeOnly ? (
-          <WelcomeView />
+        {isWelcomeOnly && !documentsLoaded ? (
+          <WelcomeView 
+            onUploadComplete={handleUploadComplete}
+            onUploadError={handleUploadError}
+          />
         ) : (
           <>
             {messages.map((msg, i) => (

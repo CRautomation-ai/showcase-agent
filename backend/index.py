@@ -2,16 +2,23 @@ import os
 import sys
 import logging
 import asyncio
-from fastapi import Depends, FastAPI, HTTPException
+from typing import List
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add backend directory to path so "from app.*" resolves to backend/app
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from app.models import AuthRequest, AuthResponse, QueryRequest, QueryResponse, LoadDocumentsResponse, HealthResponse
-from app.database import initialize_database, is_database_empty, get_document_count
-from app.rag_chain import query_rag
+from app.models import AuthRequest, AuthResponse, QueryRequest, QueryResponse, LoadDocumentsResponse, HealthResponse, UploadResponse
+from app.database import initialize_database, is_database_empty, get_document_count, clear_all_embeddings
+from app.rag_chain import query_rag, get_embedding
 from app.auth import verify_password, create_token, get_current_token
+from app.document_processor import process_uploaded_file
+from app.vector_store import store_embeddings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -30,23 +37,16 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database and check if documents need to be loaded."""
+    """Initialize database."""
     try:
         initialize_database()
         logger.info("Database initialized")
 
-        # Check if database is empty and auto-load documents if needed
-        if is_database_empty():
-            logger.info("Database is empty, auto-loading documents...")
-            data_folder = os.path.join(os.path.dirname(__file__), "data")
-            if os.path.exists(data_folder):
-                # Run loading in background to avoid blocking startup
-                asyncio.create_task(load_documents_async(data_folder))
-            else:
-                logger.warning(f"Data folder not found: {data_folder}")
+        doc_count = get_document_count()
+        if doc_count > 0:
+            logger.info(f"Database contains {doc_count} document chunks")
         else:
-            doc_count = get_document_count()
-            logger.info(f"Database already contains {doc_count} document chunks")
+            logger.info("Database is empty - waiting for file uploads")
     except Exception as e:
         logger.error(f"Error during startup: {e}")
 
@@ -134,6 +134,91 @@ async def load_documents():
         )
     except Exception as e:
         logger.error(f"Error loading documents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/upload", response_model=UploadResponse)
+@app.post("/upload", response_model=UploadResponse)
+async def upload_files(files: List[UploadFile] = File(...), _: str = Depends(get_current_token)):
+    """
+    Upload files, clear existing embeddings, and process the new files.
+    Accepts PDF and Word documents (.pdf, .docx, .doc).
+    """
+    try:
+        # Validate file types
+        supported_extensions = {'.pdf', '.docx', '.doc'}
+        filenames = []
+        
+        for file in files:
+            ext = os.path.splitext(file.filename)[1].lower()
+            if ext not in supported_extensions:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Unsupported file type: {file.filename}. Supported types: PDF, DOCX, DOC"
+                )
+            filenames.append(file.filename)
+        
+        logger.info(f"Received {len(files)} files for upload: {filenames}")
+        
+        # Clear existing embeddings
+        deleted_count = clear_all_embeddings()
+        logger.info(f"Cleared {deleted_count} existing embeddings")
+        
+        # Process each uploaded file
+        all_chunks = []
+        files_processed = 0
+        
+        for file in files:
+            file_bytes = await file.read()
+            chunks = process_uploaded_file(file_bytes, file.filename)
+            all_chunks.extend(chunks)
+            files_processed += 1
+            logger.info(f"Processed file {file.filename}: {len(chunks)} chunks")
+        
+        if not all_chunks:
+            return UploadResponse(
+                message="Files uploaded but no text content found",
+                files_processed=files_processed,
+                chunks_processed=0,
+                filenames=filenames
+            )
+        
+        # Generate embeddings for all chunks
+        logger.info(f"Generating embeddings for {len(all_chunks)} chunks...")
+        embeddings = []
+        for i, chunk in enumerate(all_chunks):
+            if (i + 1) % 10 == 0:
+                logger.info(f"Embedding progress: {i + 1}/{len(all_chunks)}")
+            embedding = get_embedding(chunk['text'])
+            embeddings.append(embedding)
+        
+        # Store embeddings in database
+        logger.info("Storing embeddings in database...")
+        store_embeddings(all_chunks, embeddings)
+        
+        return UploadResponse(
+            message="Files uploaded and processed successfully",
+            files_processed=files_processed,
+            chunks_processed=len(all_chunks),
+            filenames=filenames
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading files: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/documents")
+@app.delete("/documents")
+async def delete_documents(_: str = Depends(get_current_token)):
+    """Delete all documents from the vector database."""
+    try:
+        deleted_count = clear_all_embeddings()
+        return {"message": f"Deleted {deleted_count} document chunks"}
+    except Exception as e:
+        logger.error(f"Error deleting documents: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
